@@ -1,0 +1,125 @@
+plugins{
+    id 'distribution'
+}
+
+ext.addonName = "ABR"
+ext.addonId = 0  // TODO: 更新为 esoui.com 的插件ID
+ext.addonCompatible = "11.3.0"
+ext.esoApiToken = project.hasProperty('com.esoui.apiToken') ? project.property('com.esoui.apiToken') : ''
+ext.esoPtsDir = project.hasProperty('ESO_PTS_ADDONS_DIR') ? project.property('ESO_PTS_ADDONS_DIR') : ''
+ext.esoLiveDir = project.hasProperty('ESO_LIVE_ADDONS_DIR') ? project.property('ESO_LIVE_ADDONS_DIR') : ''
+
+
+file('changelog').withReader('utf8'){reader->
+    def m = reader.readLine() =~ /(\d+)(\.\w+)+/
+    if(m){
+        def ver = m[0][0]
+        ext.addonVersion = ver
+        ver = ver.replaceAll('a','.1').replaceAll('b','.2').replaceAll('c','.3')
+        def verNo = m[0][1].padLeft(2,'0')
+        def mm = ver=~ /\.(\w+)/
+            verNo += mm[0][1].padLeft(3,'0')
+            verNo += mm.size() ==2? mm[1][1] :''
+        ext.addonVersionNumber = verNo.padRight(6,'0')
+    }else{
+        ext.addonVersion = 'SNAPSHOT'
+        ext.addonVersionNumber = '000000'
+    }
+}
+
+CopySpec mainContents = copySpec {
+    filteringCharset = 'iso8859-1'
+    from (addonName){
+        exclude '**/*.dds'
+         filter{
+            it.replaceAll('@@ADDON_VERSION@@',addonVersion).replaceAll('@@ADDON_VERSION_NO@@',addonVersionNumber)
+        }
+    }
+    from (addonName){
+        include '**/*.dds'
+    }
+}
+
+distTar.enabled = false
+distributions {
+    main {
+        distributionBaseName  = addonName
+        contents {
+        	with mainContents
+        }
+    }
+}
+
+distZip{
+    archiveFile.set(file("${buildDir}/distributions/${addonName}-${addonVersion}.zip"))
+}
+
+if (hasProperty('ESO_PTS_ADDONS_DIR') && !esoPtsDir.isEmpty()){
+    def installDir =  new File(esoPtsDir, addonName)
+    task installToPTS(type:Sync){
+    	group='distribution'
+    	description='Installs the project into PTS dir'
+    	with mainContents
+        into installDir
+    }
+}
+
+if (hasProperty('ESO_LIVE_ADDONS_DIR') && !esoLiveDir.isEmpty()){
+    def installDir =  new File(esoLiveDir, addonName)
+    task installToLive(type:Sync){
+    	group='distribution'
+    	description='Installs the project into LIVE dir'
+    	with mainContents
+        into installDir
+    }
+}
+
+task updateChangelog {
+    group = "distribution"
+    description = "update changelog on esoui.com (without uploading zip)"
+    doLast{
+        def changelogPath = file('changelog').absolutePath
+        def cmd = ['curl',
+            '-H', "\"x-api-token: ${esoApiToken}\"",
+            '-F', "id=${addonId}",
+            '-F', "version=$addonVersion",
+            '-F', "changelog=<${changelogPath}",
+            'https://api.esoui.com/addons/update']
+        def proc = cmd.execute()
+        proc.consumeProcessOutput(System.out, System.err)
+        proc.waitFor()
+    }
+}
+
+task upload {
+    group = "distribution"
+    description = "upload addon zip file to esoui.com"
+    dependsOn distZip
+    doLast{
+        def changelog = file('changelog').getText('utf8').replaceAll('"',/\\"/)
+        def cmd = ['curl',
+            '-H', "\"x-api-token: ${esoApiToken}\"",
+            '-F', "id=${addonId}",
+            '-F', "version=$addonVersion",
+            '-F', "compatible=$addonCompatible",
+            '-F', "\"changelog=$changelog\"",
+            '-F', "\"updatefile=@${distZip.archiveFile.get().asFile.absolutePath}\"",
+            'https://api.esoui.com/addons/update']
+        def proc = cmd.execute()
+        proc.consumeProcessOutput(System.out, System.err)
+        proc.waitFor()
+    }
+}
+
+task addonInfo{
+    group = "help"
+    description = "show addon info"
+    doLast{
+        def proc = ['curl',
+            '-H', "\"x-api-token: ${esoApiToken}\"",
+            "https://api.esoui.com/addons/details/${addonId}.json"]
+                   .execute()
+        proc.consumeProcessOutput(System.out, System.err)
+        proc.waitFor()
+    }
+}

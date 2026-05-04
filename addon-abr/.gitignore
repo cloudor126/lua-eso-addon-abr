@@ -1,0 +1,11 @@
+# Build outputs
+/build/
+/.gradle/
+
+# IDE
+/.settings/
+/.project/
+/.buildpath
+
+# Distribution
+*.zip
