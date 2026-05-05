@@ -2,6 +2,8 @@
 --        vars
 --========================================
 local addon = ActivityBoardReminder
+local book = nil -- Book#M
+local viewer = nil -- Viewer#M
 local l = {} -- private table
 local m = {l=l} -- public table
 
@@ -10,8 +12,23 @@ local m = {l=l} -- public table
 --========================================
 l.menuOptions = {} -- list of menu options
 
+l.getSavedVars -- #()->(#table)
+= function()
+  return book.getSavedVars()
+end
+
+l.resetWindowPosition -- #()->()
+= function()
+  local sv = l.getSavedVars()
+  sv.windowPosition = {x = 100, y = 100}
+  viewer.refresh()
+end
+
 l.onStart -- #()->()
 = function()
+  book = addon.load("Book#M")
+  viewer = addon.load("Viewer#M")
+
   -- let modules add their defaults
   addon.callExtension(m.EXTKEY_ADD_DEFAULTS)
 
@@ -30,6 +47,20 @@ l.onStart -- #()->()
     registerForDefaults = true,
   }
   LAM2:RegisterAddonPanel('ABRAddonOptions', panelData)
+
+  -- add base menu options
+  m.addMenuOptions(
+    {
+      type = "header",
+      name = "General",
+    },
+    {
+      type = "button",
+      name = "Reset Window Position",
+      tooltip = "Reset the viewer window to default position",
+      func = l.resetWindowPosition,
+    }
+  )
 
   -- let modules add their menu options
   addon.callExtension(m.EXTKEY_ADD_MENUS)
