@@ -251,6 +251,13 @@ m.getWindow -- #()->(#Control)
   return l.window
 end
 
+m.setEditMode -- #(#boolean:isEdit)->()
+= function(isEdit)
+  -- Hide content label in edit mode
+  l.contentLabel:SetHidden(isEdit)
+  l.pageLabel:SetHidden(isEdit)
+end
+
 --========================================
 --        register
 --========================================
