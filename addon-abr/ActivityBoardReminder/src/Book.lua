@@ -83,6 +83,32 @@ m.deleteBook -- #(#number:id)->()
   end
 end
 
+m.cloneBook -- #(#number:id)->(#table|nil)
+= function(id)
+  local original = l.savedVars.books[id]
+  if not original then return nil end
+
+  local newId = GetTimeStamp()
+  local newBook = {
+    id = newId,
+    name = original.name .. " (Copy)",
+    pages = {},
+    createdTime = newId,
+    lastModified = newId,
+  }
+
+  -- Deep copy pages
+  for i, page in ipairs(original.pages) do
+    newBook.pages[i] = {
+      content = page.content,
+      fontSize = page.fontSize,
+    }
+  end
+
+  l.savedVars.books[newId] = newBook
+  return newBook
+end
+
 m.getAllBooks -- #()->(#table)
 = function()
   return l.savedVars.books
@@ -102,6 +128,19 @@ m.addPage -- #(#number:bookId, #string:content)->(#number|nil)
   return #book.pages
 end
 
+m.insertPage -- #(#number:bookId, #number:pageIndex, #string:content)->(#number|nil)
+= function(bookId, pageIndex, content)
+  local book = l.savedVars.books[bookId]
+  if not book then return nil end
+  local page = {
+    content = content or "",
+    fontSize = 14,
+  }
+  table.insert(book.pages, pageIndex, page)
+  book.lastModified = GetTimeStamp()
+  return pageIndex
+end
+
 m.updatePage -- #(#number:bookId, #number:pageIndex, #string:content)->(#boolean)
 = function(bookId, pageIndex, content)
   local book = l.savedVars.books[bookId]
@@ -116,6 +155,28 @@ m.deletePage -- #(#number:bookId, #number:pageIndex)->(#boolean)
   local book = l.savedVars.books[bookId]
   if not book or not book.pages[pageIndex] then return false end
   table.remove(book.pages, pageIndex)
+  book.lastModified = GetTimeStamp()
+  return true
+end
+
+m.movePageForward -- #(#number:bookId, #number:pageIndex)->(#boolean)
+= function(bookId, pageIndex)
+  local book = l.savedVars.books[bookId]
+  if not book or not book.pages[pageIndex] then return false end
+  if pageIndex >= #book.pages then return false end -- Can't move last page forward
+  local page = table.remove(book.pages, pageIndex)
+  table.insert(book.pages, pageIndex + 1, page)
+  book.lastModified = GetTimeStamp()
+  return true
+end
+
+m.movePageBackward -- #(#number:bookId, #number:pageIndex)->(#boolean)
+= function(bookId, pageIndex)
+  local book = l.savedVars.books[bookId]
+  if not book or not book.pages[pageIndex] then return false end
+  if pageIndex <= 1 then return false end -- Can't move first page backward
+  local page = table.remove(book.pages, pageIndex)
+  table.insert(book.pages, pageIndex - 1, page)
   book.lastModified = GetTimeStamp()
   return true
 end

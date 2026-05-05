@@ -55,7 +55,13 @@ l.onStart -- #()->()
     {
       type = "header",
       name = "General",
-    },
+    }
+  )
+
+  -- let modules add their descriptions
+  addon.callExtension(m.EXTKEY_ADD_DESCRIPTIONS, m.addMenuOptions)
+
+  m.addMenuOptions(
     {
       type = "button",
       name = "Reset Window Position",
@@ -74,6 +80,7 @@ end
 --========================================
 m.EXTKEY_ADD_DEFAULTS = "Settings:addDefaults"
 m.EXTKEY_ADD_MENUS = "Settings:addMenus"
+m.EXTKEY_ADD_DESCRIPTIONS = "Settings:addDescriptions"
 
 m.addMenuOptions -- #(#table:...)->()
 = function(...)

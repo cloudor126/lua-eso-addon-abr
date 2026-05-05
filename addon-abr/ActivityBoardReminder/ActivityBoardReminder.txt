@@ -19,4 +19,3 @@ src/Core.lua
 src/Network.lua
 src/Book.lua
 src/Viewer.lua
-src/Editor.lua
