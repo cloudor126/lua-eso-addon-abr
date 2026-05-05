@@ -57,7 +57,7 @@ l.initProtocol -- #()->(#boolean)
   l.protocol:AddField(LGB.CreateStringField("content", {maxLength = 1000}))
 
   l.protocol:OnData(function(unitTag, data)
-    addon.callExtension(m.EXTKEY_ON_DATA, unitTag, data)
+    l.onData(unitTag, data)
   end)
 
   local options = {
@@ -81,10 +81,24 @@ l.onStart -- #()->()
   addon.debug("Network initialized with protocol ID %d", PROTOCOL_ID)
 end
 
+l.onData -- #(#string:unitTag, #table:data)->()
+= function(unitTag, data)
+  local action = data.action
+  if action == ACTION_SYNC_BOOK then
+    addon.callExtension(m.EXTKEY_ON_SYNC_BOOK, unitTag, data.bookId, data.pageNum, data.content)
+  elseif action == ACTION_CHANGE_PAGE then
+    addon.callExtension(m.EXTKEY_ON_CHANGE_PAGE, unitTag, data.bookId, data.pageNum)
+  elseif action == ACTION_CLOSE then
+    addon.callExtension(m.EXTKEY_ON_CLOSE, unitTag)
+  end
+end
+
 --========================================
 --        m
 --========================================
-m.EXTKEY_ON_DATA = "Network:onData"
+m.EXTKEY_ON_SYNC_BOOK = "Network:onSyncBook"
+m.EXTKEY_ON_CHANGE_PAGE = "Network:onChangePage"
+m.EXTKEY_ON_CLOSE = "Network:onClose"
 
 m.isReady -- #()->(#boolean)
 = function()
