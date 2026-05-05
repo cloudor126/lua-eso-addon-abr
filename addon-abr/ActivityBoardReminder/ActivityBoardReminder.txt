@@ -1,0 +1,22 @@
+## Title: Activity Board Reminder
+## Author: Cloudor
+## Version: @@ADDON_VERSION@@
+## Description: Syncs activity announcement content to group members
+## APIVersion: 101049 101050
+## AddOnVersion: @@ADDON_VERSION_NO@@
+## DependsOn: LibAddonMenu-2.0>=34
+## OptionalDependsOn: LibGroupBroadcast
+## SavedVariables: ABRSV
+
+src/Addon.lua
+src/Utils.lua
+
+i18n/en.lua
+i18n/$(language).lua
+
+src/Settings.lua
+src/Core.lua
+src/Network.lua
+src/Book.lua
+src/Viewer.lua
+src/Editor.lua

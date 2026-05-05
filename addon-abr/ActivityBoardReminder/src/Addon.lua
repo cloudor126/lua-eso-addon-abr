@@ -3,7 +3,8 @@
 --========================================
 local l = {} -- private table for local use
 local m = {l=l} -- public table for module use
-local NAME = 'ABR'
+local NAME = 'ActivityBoardReminder'
+local SHORT_NAME = 'ABR'
 local VERSION = '@@ADDON_VERSION@@'
 
 --========================================
@@ -35,6 +36,7 @@ end
 --        m
 --========================================
 m.name = NAME
+m.shortName = SHORT_NAME
 m.version = VERSION
 
 m.callExtension -- call all registered extensions
@@ -87,7 +89,7 @@ end
 m.debug -- debug output
 = function(format, ...)
   local s = string.format(format, ...)
-  d('|c0000dd[ABR]|r ' .. s)
+  d('|c0000dd['..SHORT_NAME..']|r ' .. s)
 end
 
 --========================================

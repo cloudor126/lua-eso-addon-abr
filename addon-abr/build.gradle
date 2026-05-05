@@ -2,7 +2,7 @@ plugins{
     id 'distribution'
 }
 
-ext.addonName = "ABR"
+ext.addonName = "ActivityBoardReminder"
 ext.addonId = 0  // TODO: 更新为 esoui.com 的插件ID
 ext.addonCompatible = "11.3.0"
 ext.esoApiToken = project.hasProperty('com.esoui.apiToken') ? project.property('com.esoui.apiToken') : ''

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ABR is an Elder Scrolls Online (ESO) addon. (TODO: Add description)
+Activity Board Reminder (ABR) is an Elder Scrolls Online (ESO) addon that allows group leaders to publish multi-page announcements to group members.
 
 ## Build Commands
 
@@ -36,7 +36,7 @@ Version numbers are extracted from the first line of `changelog`.
 The addon uses a consistent module pattern. Each module file follows this structure:
 
 ```lua
-local addon = ABR
+local addon = ActivityBoardReminder
 local l = {}  -- private table
 local m = {l=l}  -- public table
 -- ... implementation ...
