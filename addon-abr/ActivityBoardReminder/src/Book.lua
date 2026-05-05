@@ -16,7 +16,7 @@ l.savedVarsDefaults = {
   books = {},
   currentBookId = nil,
   currentPage = 1,
-  windowPosition = {x = 100, y = 100},
+  windowPosition = {x = 300, y = 300},
   isEditMode = false,
 }
 

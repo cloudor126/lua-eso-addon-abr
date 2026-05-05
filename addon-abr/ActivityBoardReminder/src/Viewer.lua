@@ -32,10 +32,19 @@ l.createUI -- #()->()
 = function()
   local sv = l.getSavedVars()
 
+  -- Calculate center position if not set
+  local posX = sv.windowPosition.x
+  local posY = sv.windowPosition.y
+  if posX == 300 and posY == 300 then
+    -- Default position: center of screen
+    posX = GuiRoot:GetWidth() / 2 - 200
+    posY = GuiRoot:GetHeight() / 2 - 150
+  end
+
   -- Create top-level window
   l.window = WINDOW_MANAGER:CreateTopLevelWindow("ABRViewerWindow")
   l.window:SetDimensions(400, 300)
-  l.window:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sv.windowPosition.x, sv.windowPosition.y)
+  l.window:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, posX, posY)
   l.window:SetClampedToScreen(true)
   l.window:SetMouseEnabled(true)
 
@@ -97,9 +106,9 @@ l.createUI -- #()->()
 
   -- Save position when moved
   l.window:SetHandler("OnMoveStop", function()
-    local _, _, _, offsetX, offsetY = l.window:GetAnchor()
-    sv.windowPosition.x = offsetX
-    sv.windowPosition.y = offsetY
+    local savedVars = l.getSavedVars()
+    savedVars.windowPosition.x = l.window:GetLeft()
+    savedVars.windowPosition.y = l.window:GetTop()
   end)
 
   l.window:SetHidden(true)
@@ -148,12 +157,6 @@ end
 
 l.updateDisplay -- #()->()
 = function()
-  local sv = l.getSavedVars()
-
-  -- Update window position
-  l.window:ClearAnchors()
-  l.window:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sv.windowPosition.x, sv.windowPosition.y)
-
   local currentBook = book.getCurrentBook()
   local currentPage = book.getCurrentPage()
 
