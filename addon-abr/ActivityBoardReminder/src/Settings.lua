@@ -43,6 +43,7 @@ l.onStart -- #()->()
     author = "Cloudor",
     version = addon.version,
     website = "https://www.esoui.com/downloads/info-ActivityBoardReminder.html",
+    slashCommand = "/abrset",
     registerForRefresh = true,
     registerForDefaults = true,
   }

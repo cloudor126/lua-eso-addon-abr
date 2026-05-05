@@ -163,6 +163,12 @@ end
 
 l.updateDisplay -- #()->()
 = function()
+  local sv = l.getSavedVars()
+
+  -- Update window position
+  l.window:ClearAnchors()
+  l.window:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sv.windowPosition.x, sv.windowPosition.y)
+
   local currentBook = book.getCurrentBook()
   local currentPage = book.getCurrentPage()
 
