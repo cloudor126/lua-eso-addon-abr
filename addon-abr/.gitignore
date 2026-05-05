@@ -3,9 +3,7 @@
 /.gradle/
 
 # IDE
-/.settings/
-/.project/
-/.buildpath
+# (All IDE configs are committed for team sharing)
 
 # Distribution
 *.zip

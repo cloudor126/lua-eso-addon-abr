@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildpath>
+	<buildpathentry kind="src" path="ActivityBoardReminder/src"/>
+	<buildpathentry kind="src" path="ActivityBoardReminder/i18n"/>
+	<buildpathentry combineaccessrules="false" kind="prj" path="/eso-api"/>
+</buildpath>
