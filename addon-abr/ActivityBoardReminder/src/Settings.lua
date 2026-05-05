@@ -22,6 +22,7 @@ l.resetWindowPosition -- #()->()
   local sv = l.getSavedVars()
   sv.windowPosition = {x = 100, y = 100}
   viewer.refresh()
+  d("|c00FF00[ABR]|r Window position reset to default (100, 100)")
 end
 
 l.onStart -- #()->()

@@ -5,7 +5,8 @@
       "WebFetch(domain:www.esoui.com)",
       "WebFetch(domain:wiki.esoui.com)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(gradle installToLive)"
     ]
   }
 }

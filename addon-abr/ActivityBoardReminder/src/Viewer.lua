@@ -92,29 +92,14 @@ l.createUI -- #()->()
     l.toggleEditMode()
   end)
 
-  -- Drag handlers
-  l.window:SetHandler("OnMouseDown", function(_, button)
-    if button == 1 then
-      l.isDragging = true
-      l.dragStartX = sv.windowPosition.x
-      l.dragStartY = sv.windowPosition.y
-    end
-  end)
+  -- Make window movable
+  l.window:SetMovable(true)
 
-  l.window:SetHandler("OnMouseUp", function(_, button)
-    if button == 1 and l.isDragging then
-      l.isDragging = false
-    end
-  end)
-
-  l.window:SetHandler("OnMouseMove", function()
-    if l.isDragging then
-      local mouseX, mouseY = GetUIMousePosition()
-      sv.windowPosition.x = mouseX - 200
-      sv.windowPosition.y = mouseY - 150
-      l.window:ClearAnchors()
-      l.window:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sv.windowPosition.x, sv.windowPosition.y)
-    end
+  -- Save position when moved
+  l.window:SetHandler("OnMoveStop", function()
+    local _, _, _, offsetX, offsetY = l.window:GetAnchor()
+    sv.windowPosition.x = offsetX
+    sv.windowPosition.y = offsetY
   end)
 
   l.window:SetHidden(true)
